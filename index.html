@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -41,7 +40,7 @@
   </style>
 </head>
 <body class="bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center min-h-screen p-4">
-  <div class="bg-teal-100 p-8 md:p-12 rounded-3xl shadow-2xl w-full max-w-lg text-center">
+  <div class="bg-teal-100 p-8 md:p-12 rounded-3xl shadow-2xl w-full max-w-lg text-center relative">
     <div class="mb-4 flex justify-between items-center">
       <select id="language-select" class="bg-gray-100 rounded-lg p-2 text-gray-700 font-semibold">
         <option value="en-GB">English</option>
@@ -81,7 +80,6 @@ const translations = {
 };
 
 let correctColor = {};
-let allOptions = [];
 let remainingColors = [];
 let currentLang = 'en-GB';
 
@@ -133,6 +131,7 @@ function startNewRound() {
   messageBox.textContent = '';
   correctColor = remainingColors.pop();
 
+  // display current color image
   colorBox.innerHTML = '';
   const image = document.createElement('img');
   image.src = correctColor.image;
@@ -140,6 +139,7 @@ function startNewRound() {
   image.className = "w-full h-full object-cover rounded-xl";
   colorBox.appendChild(image);
 
+  // prepare options
   const incorrectOptions = [...colors.filter(c => c !== correctColor)];
   shuffleArray(incorrectOptions);
   const displayedOptions = [correctColor, ...incorrectOptions.slice(0, 3)];
@@ -181,11 +181,28 @@ function checkAnswer(selected) {
 }
 
 function endGame() {
-  document.getElementById('color-box').innerHTML = '';
-  document.getElementById('options-container').innerHTML = '';
-  document.getElementById('message-box').textContent = translations[currentLang].congrats;
-  document.getElementById('play-again-btn').textContent = translations[currentLang].playAgain;
-  document.getElementById('play-again-btn').classList.remove('hidden');
+  const colorBox = document.getElementById('color-box');
+  const optionsContainer = document.getElementById('options-container');
+  const messageBox = document.getElementById('message-box');
+  const playAgainBtn = document.getElementById('play-again-btn');
+
+  // clear previous content
+  optionsContainer.innerHTML = '';
+  messageBox.textContent = translations[currentLang].congrats;
+
+  // insert final image
+  colorBox.innerHTML = '';
+  const finalImg = document.createElement('img');
+  finalImg.src = 'final.jpg';
+  finalImg.alt = translations[currentLang].congrats;
+  finalImg.className = "w-full h-full object-cover rounded-xl";
+  colorBox.appendChild(finalImg);
+
+  // show play again button
+  playAgainBtn.textContent = translations[currentLang].playAgain;
+  playAgainBtn.classList.remove('hidden');
+
+  // confetti celebration
   for (let i = 0; i < 100; i++) {
     const c = document.createElement('div');
     c.className = 'confetti';
