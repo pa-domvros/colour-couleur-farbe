@@ -1,486 +1,210 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Guess the Colour</title>
-    <!-- Tailwind CSS for styling -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Balsamiq+Sans:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Balsamiq Sans', cursive;
-        }
-        /* Custom CSS for the confetti animation */
-        .confetti {
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            background-color: #f00;
-            opacity: 0;
-            animation: fall 3s ease-in forwards;
-        }
-
-        @keyframes fall {
-            0% {
-                transform: translateY(-100vh) rotate(0deg);
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(100vh) rotate(720deg);
-                opacity: 0;
-            }
-        }
-        
-        .microphone-btn.listening {
-            animation: pulse 1.5s infinite;
-        }
-
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(167, 139, 250, 0.7); }
-            70% { box-shadow: 0 0 0 10px rgba(167, 139, 250, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(167, 139, 250, 0); }
-        }
-
-        /* Guaranteed visible button text */
-        .option-btn {
-            background-color: #ffffff !important;
-            color: #4f46e5 !important;
-            font-weight: 700 !important;
-            border: 2px solid #c7d2fe !important;
-        }
-        .option-btn:hover {
-            background-color: #eef2ff !important;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Guess the Colour</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Balsamiq+Sans:wght@400;700&display=swap" rel="stylesheet"/>
+  <style>
+    body {
+      font-family: 'Balsamiq Sans', cursive;
+    }
+    .confetti {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background-color: #f00;
+      opacity: 0;
+      animation: fall 3s ease-in forwards;
+    }
+    @keyframes fall {
+      0% {
+        transform: translateY(-100vh) rotate(0deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(100vh) rotate(720deg);
+        opacity: 0;
+      }
+    }
+    .option-btn {
+      background-color: #ffffff !important;
+      color: #4f46e5 !important;
+      font-weight: 700 !important;
+      border: 2px solid #c7d2fe !important;
+    }
+    .option-btn:hover {
+      background-color: #eef2ff !important;
+    }
+  </style>
 </head>
 <body class="bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center min-h-screen p-4">
-    <div class="bg-teal-100 p-8 md:p-12 rounded-3xl shadow-2xl w-full max-w-lg text-center transform transition-all duration-500 hover:scale-105">
-        <!-- Language Selector -->
-        <div class="mb-4 flex justify-between items-center">
-            <select id="language-select" class="bg-gray-100 rounded-lg p-2 text-gray-700 font-semibold">
-                <option value="en-GB">English</option>
-                <option value="de-DE">Deutsch</option>
-                <option value="fr-FR">Français</option>
-            </select>
-            <!-- Microphone Button for voice recognition -->
-            <button id="mic-btn" class="microphone-btn bg-purple-500 text-white p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-purple-300">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-mic">
-                    <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/>
-                </svg>
-            </button>
-<button id="instruction-btn" class="bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-indigo-700 transition duration-300">Click here</button>
-        </div>
-
-        <h1 id="main-title" class="text-3xl md:text-4xl font-bold text-gray-800 mb-6"></h1>
-        
-        <!-- Colour display box -->
-        <div id="color-box" class="w-36 h-36 md:w-48 md:h-48 mx-auto rounded-xl shadow-inner border-4 border-gray-200 transition-colors duration-300 mb-8 flex items-center justify-center overflow-hidden">
-            <!-- The image will be inserted here by JavaScript -->
-        </div>
-        
-        <!-- Options container -->
-        <div id="options-container" class="grid grid-cols-2 gap-4 mt-6">
-            <!-- Buttons will be generated here by JavaScript -->
-        </div>
-
-        <!-- Feedback message box -->
-        <div id="message-box" class="mt-8 text-xl font-semibold text-gray-700 h-8"></div>
-        
-        <!-- Play Again Button (hidden by default) -->
-        <button id="play-again-btn" onclick="resetGame()" class="hidden mt-6 bg-purple-500 hover:bg-purple-600 text-white font-bold py-3 px-6 rounded-full shadow-lg transition-all duration-300 transform hover:scale-105">
-        </button>
-        
-        <!-- Footer -->
-        <div class="mt-8 text-sm text-gray-600">
-            <p>✨✍️ Devised by Panagiotis Domvros, English and Drama Teacher © 2025✍️✨</p>
-        </div>
+  <div class="bg-teal-100 p-8 md:p-12 rounded-3xl shadow-2xl w-full max-w-lg text-center">
+    <div class="mb-4 flex justify-between items-center">
+      <select id="language-select" class="bg-gray-100 rounded-lg p-2 text-gray-700 font-semibold">
+        <option value="en-GB">English</option>
+        <option value="de-DE">Deutsch</option>
+        <option value="fr-FR">Français</option>
+      </select>
     </div>
+    <h1 id="main-title" class="text-3xl md:text-4xl font-bold text-gray-800 mb-6"></h1>
+    <div id="color-box" class="w-36 h-36 md:w-48 md:h-48 mx-auto rounded-xl shadow-inner border-4 border-gray-200 mb-8 flex items-center justify-center overflow-hidden"></div>
+    <div id="options-container" class="grid grid-cols-2 gap-4 mt-6"></div>
+    <div id="message-box" class="mt-8 text-xl font-semibold text-gray-700 h-8"></div>
+    <button id="play-again-btn" onclick="resetGame()" class="hidden mt-6 bg-purple-500 hover:bg-purple-600 text-white font-bold py-3 px-6 rounded-full shadow-lg transition-all duration-300 transform hover:scale-105"></button>
+    <div class="mt-8 text-sm text-gray-600">
+      <p>✨✍️ Devised by Panagiotis Domvros, English and Drama Teacher © 2025✍️✨</p>
+    </div>
+  </div>
 
-    <script>
-        // Data structure for colours with names and image filenames.
-        const colors = [
-            { image: "red.jpg", name: { en: "Red", de: "Rot", fr: "Rouge" } },
-            { image: "blue.jpg", name: { en: "Blue", de: "Blau", fr: "Bleu" } },
-            { image: "green.jpg", name: { en: "Green", de: "Grün", fr: "Vert" } },
-            { image: "yellow.jpg", name: { en: "Yellow", de: "Gelb", fr: "Jaune" } },
-            { image: "orange.jpg", name: { en: "Orange", de: "Orange", fr: "Orange" } },
-            { image: "purple.jpg", name: { en: "Purple", de: "Lila", fr: "Violet" } },
-            { image: "pink.jpg", name: { en: "Pink", de: "Rosa", fr: "Rose" } },
-            { image: "brown.jpg", name: { en: "Brown", de: "Braun", fr: "Marron" } },
-            { image: "black.jpg", name: { en: "Black", de: "Schwarz", fr: "Noir" } },
-            { image: "white.jpg", name: { en: "White", de: "Weiß", fr: "Blanc" } },
-            { image: "grey.jpg", name: { en: "Grey", de: "Grau", fr: "Gris" } },
-        ];
+<script>
+const colors = [
+  { image: "red.jpg", name: { en: "Red", de: "Rot", fr: "Rouge" } },
+  { image: "blue.jpg", name: { en: "Blue", de: "Blau", fr: "Bleu" } },
+  { image: "green.jpg", name: { en: "Green", de: "Grün", fr: "Vert" } },
+  { image: "yellow.jpg", name: { en: "Yellow", de: "Gelb", fr: "Jaune" } },
+  { image: "orange.jpg", name: { en: "Orange", de: "Orange", fr: "Orange" } },
+  { image: "purple.jpg", name: { en: "Purple", de: "Lila", fr: "Violet" } },
+  { image: "pink.jpg", name: { en: "Pink", de: "Rosa", fr: "Rose" } },
+  { image: "brown.jpg", name: { en: "Brown", de: "Braun", fr: "Marron" } },
+  { image: "black.jpg", name: { en: "Black", de: "Schwarz", fr: "Noir" } },
+  { image: "white.jpg", name: { en: "White", de: "Weiß", fr: "Blanc" } },
+  { image: "grey.jpg", name: { en: "Grey", de: "Grau", fr: "Gris" } },
+];
 
-        // Text content for different languages.
-        const translations = {
-            'en-GB': { 
-                title: "Guess the Colour!", 
-                correct: "Correct!", 
-                incorrect: "Incorrect, try again.", 
-                congrats: "Congrats! You got them all!",
-                playAgain: "Play Again",
-                listening: "Listening...",
-                micError: "Voice recognition not supported or denied."
-            },
-            'de-DE': { 
-                title: "Rate die Farbe!", 
-                correct: "Richtig!", 
-                incorrect: "Falsch, versuch's noch einmal.",
-                congrats: "Glückwunsch! Du hast alle richtig!",
-                playAgain: "Nochmal spielen",
-                listening: "Zuhören...",
-                micError: "Spracherkennung nicht unterstützt oder abgelehnt."
-            },
-            'fr-FR': { 
-                title: "Devinez la couleur!", 
-                correct: "Correct!", 
-                incorrect: "Faux, réessayez.",
-                congrats: "Félicitations ! Vous les avez tous trouvés !",
-                playAgain: "Rejouer",
-                listening: "À l'écoute...",
-                micError: "Reconnaissance vocale non prise en charge ou refusée."
-            }
-        };
+const translations = {
+  'en-GB': { title: "Guess the Colour!", correct: "Correct!", incorrect: "Incorrect!", congrats: "Congrats! You got them all!", playAgain: "Play Again" },
+  'de-DE': { title: "Rate die Farbe!", correct: "Richtig!", incorrect: "Falsch!", congrats: "Glückwunsch! Du hast alle richtig!", playAgain: "Nochmal spielen" },
+  'fr-FR': { title: "Devinez la couleur!", correct: "Correct!", incorrect: "Faux!", congrats: "Félicitations ! Vous les avez toutes trouvées !", playAgain: "Rejouer" }
+};
 
-        // Global variables for game state.
-        let correctColor = {};
-        let allOptions = [];
-        let remainingColors = [];
-        let currentLang = 'en-GB';
-        
-        // Web Speech API
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        let recognition = null;
-        if (SpeechRecognition) {
-            recognition = new SpeechRecognition();
-            recognition.continuous = false;
-            recognition.interimResults = false;
-            recognition.onresult = event => {
-                const transcript = event.results[0][0].transcript.toLowerCase().trim();
-                console.log("Transcript:", transcript);
-                checkVoiceAnswer(transcript);
-            };
-            recognition.onend = () => {
-                document.getElementById('mic-btn').classList.remove('listening');
-            };
-            recognition.onerror = event => {
-                console.error("Speech recognition error:", event.error);
-                document.getElementById('message-box').textContent = translations[currentLang].micError;
-                document.getElementById('mic-btn').classList.remove('listening');
-            };
-        } else {
-            console.log("Speech recognition not supported");
-        }
-        
-        // Helper function to play a sound (correct or incorrect).
-        function playSound(isCorrect) {
-            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            const oscillator = audioContext.createOscillator();
-            const gainNode = audioContext.createGain();
+let correctColor = {};
+let allOptions = [];
+let remainingColors = [];
+let currentLang = 'en-GB';
 
-            oscillator.connect(gainNode);
-            gainNode.connect(audioContext.destination);
+function mapLangCode(code) {
+  if (code.startsWith('en')) return 'en';
+  if (code.startsWith('fr')) return 'fr';
+  if (code.startsWith('de')) return 'de';
+  return 'en';
+}
 
-            if (isCorrect) {
-                // Correct sound: a high-pitched beep
-                oscillator.type = 'sine';
-                oscillator.frequency.value = 880; // A5
-                gainNode.gain.setValueAtTime(0.5, audioContext.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.5);
-            } else {
-                // Incorrect sound: a lower-pitched, sharp tone
-                oscillator.type = 'square';
-                oscillator.frequency.value = 220; // A3
-                gainNode.gain.setValueAtTime(0.5, audioContext.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.2);
-            }
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+}
 
-            oscillator.start();
-            setTimeout(() => {
-                oscillator.stop();
-            }, isCorrect ? 500 : 200);
-        }
-        
-        // Function to create and animate confetti
-        function showConfetti() {
-            const colors = ['#f00', '#0f0', '#00f', '#ff0', '#f0f', '#0ff'];
-            for (let i = 0; i < 100; i++) {
-                const confetti = document.createElement('div');
-                confetti.className = 'confetti';
-                confetti.style.left = `${Math.random() * 100}vw`;
-                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                confetti.style.animationDelay = `${Math.random() * 3}s`;
-                document.body.appendChild(confetti);
-            }
-        }
+function playSound(isCorrect) {
+  const ctx = new (window.AudioContext || window.webkitAudioContext)();
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = isCorrect ? 'sine' : 'square';
+  osc.frequency.value = isCorrect ? 800 : 200;
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+  gain.gain.setValueAtTime(0.5, ctx.currentTime);
+  osc.start();
+  gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+  osc.stop(ctx.currentTime + 0.4);
+}
 
-        // Function to shuffle an array (Fisher-Yates shuffle algorithm).
-        function shuffleArray(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-        }
-        
-        // Function to reset the game to its initial state.
-        function resetGame() {
-            // Remove confetti elements
-            document.querySelectorAll('.confetti').forEach(el => el.remove());
-            
-            // Re-populate and shuffle the colours to be guessed.
-            remainingColors = [...colors];
-            shuffleArray(remainingColors);
-            
-            // Hide the play again button
-            document.getElementById('play-again-btn').classList.add('hidden');
-            
-            // Stop voice recognition if it's active.
-            if (recognition) {
-                recognition.stop();
-            }
+function resetGame() {
+  document.querySelectorAll('.confetti').forEach(el => el.remove());
+  remainingColors = [...colors];
+  shuffleArray(remainingColors);
+  document.getElementById('play-again-btn').classList.add('hidden');
+  startNewRound();
+}
 
-            // Start the first round.
-            startNewRound();
-        }
+function startNewRound() {
+  const colorBox = document.getElementById('color-box');
+  const optionsContainer = document.getElementById('options-container');
+  const messageBox = document.getElementById('message-box');
+  const mainTitle = document.getElementById('main-title');
 
-        // Function to start a new game round.
-        function startNewRound() {
-            // Get DOM elements.
-            const colorBox = document.getElementById('color-box');
-            const optionsContainer = document.getElementById('options-container');
-            const messageBox = document.getElementById('message-box');
-            const mainTitle = document.getElementById('main-title');
+  if (remainingColors.length === 0) return endGame();
 
-            // If all colours have been guessed, end the game.
-            if (remainingColors.length === 0) {
-                endGame();
-                return;
-            }
+  mainTitle.textContent = translations[currentLang].title;
+  messageBox.textContent = '';
+  correctColor = remainingColors.pop();
 
-            // Update UI text based on the current language.
-            mainTitle.textContent = translations[currentLang].title;
-            messageBox.textContent = '';
-            
-            // Pick a colour from the remaining colours and remove it.
-            correctColor = remainingColors.pop();
+  colorBox.innerHTML = '';
+  const image = document.createElement('img');
+  image.src = correctColor.image;
+  image.alt = correctColor.name[mapLangCode(currentLang)];
+  image.className = "w-full h-full object-cover rounded-xl";
+  colorBox.appendChild(image);
 
-            // Guard against undefined color
-            if (!correctColor) {
-                console.error("Error: 'correctColor' is undefined. Ending game.");
-                endGame();
-                return;
-            }
-            
-            // Clear previous image and add the new one.
-            colorBox.innerHTML = '';
-            const image = document.createElement('img');
-            image.src = correctColor.image;
-            // Use a fallback for the image alt if the name is not found
-            image.alt = correctColor.name[currentLang] || "Colour box";
-            image.className = "w-full h-full object-cover rounded-xl";
-            image.onerror = () => { // Fallback in case image file is not found
-                // Ensure correctColor.name exists before trying to access its property
-                const fallbackText = correctColor.name && correctColor.name[currentLang] ? correctColor.name[currentLang] : "Image not found";
-                image.src = `https://placehold.co/192x192/cccccc/333333?text=${fallbackText}`;
-            };
-            colorBox.appendChild(image);
+  const incorrectOptions = [...colors.filter(c => c !== correctColor)];
+  shuffleArray(incorrectOptions);
+  const displayedOptions = [correctColor, ...incorrectOptions.slice(0, 3)];
+  shuffleArray(displayedOptions);
 
-            // Generate three random incorrect options.
-            const incorrectOptions = [];
-            const shuffledColors = [...colors].filter(c => c.image !== correctColor.image);
-            shuffleArray(shuffledColors);
-            incorrectOptions.push(...shuffledColors.slice(0, 3));
+  optionsContainer.innerHTML = '';
+  displayedOptions.forEach(option => {
+    const btn = document.createElement('button');
+    btn.textContent = option.name[mapLangCode(currentLang)];
+    btn.className = "option-btn py-3 px-4 rounded-full shadow-lg transition-transform hover:scale-105";
+    btn.onclick = () => checkAnswer(option.name[mapLangCode(currentLang)]);
+    optionsContainer.appendChild(btn);
+  });
+}
 
-            // Combine correct and incorrect options and shuffle them.
-            allOptions = [...incorrectOptions, correctColor];
-            shuffleArray(allOptions);
+function checkAnswer(selected) {
+  const options = document.getElementById('options-container').children;
+  const messageBox = document.getElementById('message-box');
+  const correctName = correctColor.name[mapLangCode(currentLang)];
 
-            // Clear previous options.
-            optionsContainer.innerHTML = '';
-            
-            // Create and append buttons for each option.
-            allOptions.forEach(option => {
-                const button = document.createElement('button');
-                // Use the correct language for the button text, with a fallback.
-                button.textContent = option.name[currentLang] || option.name["en"] || "Unknown";
-                button.className = "option-btn font-bold py-3 px-4 rounded-full shadow-lg transition-colors duration-200 transform hover:-translate-y-1 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-indigo-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed";
-                button.onclick = () => checkAnswer(option.name[currentLang] || option.name["en"]);
-                optionsContainer.appendChild(button);
-            });
-        }
-        
-        // Function to handle the end of the game.
-        function endGame() {
-            const colorBox = document.getElementById('color-box');
-            const optionsContainer = document.getElementById('options-container');
-            const messageBox = document.getElementById('message-box');
-            const playAgainBtn = document.getElementById('play-again-btn');
-            
-            // Clear the colour box and options.
-            colorBox.innerHTML = '';
-            optionsContainer.innerHTML = '';
-
-            // Stop voice recognition if it's active.
-            if (recognition) {
-                recognition.stop();
-            }
-
-            // Display the congratulations message.
-            messageBox.textContent = translations[currentLang].congrats;
-            messageBox.classList.remove('text-red-600', 'text-green-600');
-            messageBox.classList.add('text-gray-800');
-
-            // Show confetti animation.
-            showConfetti();
-            
-            // Show the "Play Again" button and update its text.
-            playAgainBtn.textContent = translations[currentLang].playAgain;
-            playAgainBtn.classList.remove('hidden');
-        }
-
-        // Function to check if the user's answer (from a button click) is correct.
-        function checkAnswer(selectedName) {
-            const optionsContainer = document.getElementById('options-container');
-            const messageBox = document.getElementById('message-box');
-
-            // Stop voice recognition if a button is clicked.
-            if (recognition) {
-                recognition.stop();
-            }
-            
-            // Disable all buttons to prevent multiple clicks.
-            Array.from(optionsContainer.children).forEach(btn => {
-                btn.disabled = true;
-                if (btn.textContent === correctColor.name[currentLang]) {
-                    btn.classList.remove('option-btn');
-                    btn.classList.add('bg-green-500', 'text-white', 'hover:bg-green-500');
-                } else if (btn.textContent === selectedName) {
-                    btn.classList.remove('option-btn');
-                    btn.classList.add('bg-red-500', 'text-white', 'hover:bg-red-500');
-                }
-            });
-
-            if (selectedName === correctColor.name[currentLang]) {
-                messageBox.textContent = translations[currentLang].correct;
-                messageBox.classList.remove('text-red-600');
-                messageBox.classList.add('text-green-600');
-                playSound(true);
-                // Start a new round after a short delay.
-                setTimeout(startNewRound, 1500);
-            } else {
-                messageBox.textContent = translations[currentLang].incorrect;
-                messageBox.classList.remove('text-green-600');
-                messageBox.classList.add('text-red-600');
-                playSound(false);
-                // Re-enable buttons to let the user try again.
-                setTimeout(() => {
-                    Array.from(optionsContainer.children).forEach(btn => {
-                        if (btn.textContent !== correctColor.name[currentLang]) {
-                            btn.disabled = false;
-                            btn.classList.add('option-btn');
-                            btn.classList.remove('bg-red-500', 'text-white', 'hover:bg-red-500');
-                        }
-                    });
-                }, 1000);
-            }
-        }
-        
-        // Function to check if the user's voice answer is correct.
-        function checkVoiceAnswer(spokenWord) {
-             const messageBox = document.getElementById('message-box');
-             const optionsContainer = document.getElementById('options-container');
-             const correctName = correctColor.name[currentLang].toLowerCase();
-
-             // Check if the spoken word matches the correct answer.
-             if (spokenWord === correctName) {
-                 messageBox.textContent = translations[currentLang].correct;
-                 messageBox.classList.remove('text-red-600');
-                 messageBox.classList.add('text-green-600');
-                 playSound(true);
-
-                 // Visually highlight the correct button.
-                 Array.from(optionsContainer.children).forEach(btn => {
-                     btn.disabled = true;
-                     if (btn.textContent.toLowerCase() === correctName) {
-                         btn.classList.remove('option-btn');
-                         btn.classList.add('bg-green-500', 'text-white', 'hover:bg-green-500');
-                     }
-                 });
-
-                 // Move to the next round.
-                 setTimeout(startNewRound, 1500);
-             } else {
-                 messageBox.textContent = translations[currentLang].incorrect;
-                 messageBox.classList.remove('text-green-600');
-                 messageBox.classList.add('text-red-600');
-                 playSound(false);
-                 
-                 // Restart listening after a short delay if the user gets it wrong.
-                 setTimeout(() => {
-                    startVoiceRecognition();
-                 }, 1000);
-             }
-        }
-
-        // Function to start voice recognition
-        function startVoiceRecognition() {
-            if (recognition) {
-                try {
-                    // Update the language for recognition based on the selected option.
-                    recognition.lang = document.getElementById('language-select').value;
-                    recognition.start();
-                    document.getElementById('message-box').textContent = translations[currentLang].listening;
-                    document.getElementById('mic-btn').classList.add('listening');
-                } catch(e) {
-                    // This handles cases where recognition is already in progress.
-                    console.error("Recognition start failed:", e);
-                }
-            } else {
-                document.getElementById('message-box').textContent = translations[currentLang].micError;
-            }
-        }
-        
-        // Event listener for language change.
-        document.getElementById('language-select').addEventListener('change', (e) => {
-            currentLang = e.target.value;
-            resetGame();
-        });
-
-        // Event listener for the microphone button.
-        document.getElementById('mic-btn').addEventListener('click', () => {
-             // Stop any active recognition before starting a new one.
-             if (recognition) {
-                 recognition.stop();
-             }
-             startVoiceRecognition();
-        });
-        
-        
-// Play the appropriate instruction audio based on language
-document.getElementById('instruction-btn').addEventListener('click', () => {
-    const lang = document.getElementById('language-select').value;
-    let audioFile = '1.mp3'; // default: English
-
-    if (lang === 'fr-FR') {
-        audioFile = '2.mp3';
-    } else if (lang === 'de-DE') {
-        audioFile = '3.mp3';
+  Array.from(options).forEach(btn => {
+    btn.disabled = true;
+    if (btn.textContent === correctName) {
+      btn.classList.remove('option-btn');
+      btn.classList.add('bg-green-500', 'text-white');
+    } else if (btn.textContent === selected) {
+      btn.classList.remove('option-btn');
+      btn.classList.add('bg-red-500', 'text-white');
     }
+  });
 
-    const audio = new Audio(audioFile);
-    audio.play().catch(err => {
-        console.error("Audio play failed:", err);
-        document.getElementById('message-box').textContent = "⚠️ Could not play instruction audio.";
-    });
+  const isCorrect = selected === correctName;
+  messageBox.textContent = isCorrect ? translations[currentLang].correct : translations[currentLang].incorrect;
+  messageBox.classList.remove('text-red-600', 'text-green-600');
+  messageBox.classList.add(isCorrect ? 'text-green-600' : 'text-red-600');
+  playSound(isCorrect);
+
+  setTimeout(startNewRound, 1500);
+}
+
+function endGame() {
+  document.getElementById('color-box').innerHTML = '';
+  document.getElementById('options-container').innerHTML = '';
+  document.getElementById('message-box').textContent = translations[currentLang].congrats;
+  document.getElementById('play-again-btn').textContent = translations[currentLang].playAgain;
+  document.getElementById('play-again-btn').classList.remove('hidden');
+  for (let i = 0; i < 100; i++) {
+    const c = document.createElement('div');
+    c.className = 'confetti';
+    c.style.left = `${Math.random() * 100}vw`;
+    c.style.backgroundColor = ['#f00','#0f0','#00f','#ff0','#0ff','#f0f'][Math.floor(Math.random()*6)];
+    c.style.animationDelay = `${Math.random() * 2}s`;
+    document.body.appendChild(c);
+  }
+}
+
+document.getElementById('language-select').addEventListener('change', (e) => {
+  currentLang = e.target.value;
+  resetGame();
 });
 
-
-// Start the game when the page loads.
-        document.addEventListener('DOMContentLoaded', resetGame);
-    </script>
+document.addEventListener('DOMContentLoaded', () => {
+  currentLang = document.getElementById('language-select').value;
+  resetGame();
+});
+</script>
 </body>
 </html>
